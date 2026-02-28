@@ -1,0 +1,20 @@
+# Netlify Configuration for mono-repo setup
+
+[build]
+  # The directory to change to before running the build command
+  base = "frontend"
+  
+  # The command to run to build your site
+  command = "npm run build"
+  
+  # The directory that contains the deploy-ready HTML files and assets
+  # Relative to the 'base' directory above
+  publish = "dist"
+
+[[redirects]]
+  # This serves index.html for all requests that don't match a static file
+  # (Needed for React Router support)
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
