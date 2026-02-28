@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" fill="none">
+  <!-- Book icon above L -->
+  <path d="M18 4 L26 10 L34 4" stroke="#1a2332" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M18 4 L26 12 L34 4" stroke="#1a2332" stroke-width="0" fill="#1a2332" opacity="0.15"/>
+  <path d="M22 7 L26 10 L30 7" stroke="#c8a97e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- L -->
+  <text x="10" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="800" font-size="52" fill="#1a2332">L</text>
+  <!-- M -->
+  <text x="48" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="800" font-size="52" fill="#1a2332">M</text>
+  <!-- S in gold -->
+  <text x="108" y="52" font-family="Inter, system-ui, -apple-system, sans-serif" font-weight="800" font-size="52" fill="#c8a97e">S</text>
+</svg>
