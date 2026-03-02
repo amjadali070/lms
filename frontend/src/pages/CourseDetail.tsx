@@ -550,22 +550,32 @@ const CourseDetail = () => {
                       </div>
                     );
                   })}
-                  {module.quiz && module.quiz.length > 0 && (
-                    <div
-                      className="px-6 py-4 flex items-center justify-between bg-orange-50/30 hover:bg-orange-50 cursor-pointer"
-                      onClick={() => handleStartQuiz(index)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="bg-orange-100 text-orange-500 p-2 rounded w-8 h-8 flex items-center justify-center">
-                          <FileText size={16} />
+                  {module.quiz && module.quiz.length > 0 && (() => {
+                    const quizId = `${index}-0`;
+                    const prevScore = enrollment?.quizScores?.[quizId];
+                    const quizCompleted = prevScore !== undefined;
+
+                    return (
+                      <div
+                        className={`px-6 py-4 flex items-center justify-between cursor-pointer transition-colors ${quizCompleted ? "bg-gray-50 hover:bg-gray-100" : "bg-orange-50/30 hover:bg-orange-50"}`}
+                        onClick={() => handleStartQuiz(index)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`p-2 rounded w-8 h-8 flex items-center justify-center ${quizCompleted ? "bg-green-100 text-green-500" : "bg-orange-100 text-orange-500"}`}
+                          >
+                            {quizCompleted ? <Check size={16} /> : <FileText size={16} />}
+                          </div>
+                          <span
+                            className={`font-medium ${quizCompleted ? "text-gray-500 line-through" : "text-orange-800"}`}
+                          >
+                            Module Quiz ({module.quiz.length} Questions) {quizCompleted && `- Score: ${prevScore}%`}
+                          </span>
                         </div>
-                        <span className="font-medium text-orange-800">
-                          Module Quiz ({module.quiz.length} Questions)
-                        </span>
+                        <ChevronDown size={16} />
                       </div>
-                      <ChevronDown size={16} />
-                    </div>
-                  )}
+                    );
+                  })()}
                 </div>
               </div>
             ))}

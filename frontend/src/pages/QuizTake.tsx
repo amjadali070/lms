@@ -35,7 +35,43 @@ const QuizTake = () => {
         setCourse(res.data.course);
         const module = res.data.course.modules[parseInt(moduleIndex!)];
         if (module && module.quiz && module.quiz.length > 0) {
-          setAnswers(new Array(module.quiz.length).fill(-1));
+          const enrollment = res.data.enrollment;
+          const quizId = `${moduleIndex}-0`;
+          const prevScore = enrollment?.quizScores?.[quizId];
+          const prevAnswers = enrollment?.quizAnswers?.[quizId];
+
+          if (prevScore !== undefined && prevAnswers) {
+            setAnswers(prevAnswers);
+            
+            // Calculate previous detailed results
+            const results = module.quiz.map((question: any, qIndex: number) => {
+              const userAnswer = prevAnswers[qIndex];
+              let correct = false;
+
+              if (question.type === "single") {
+                correct = userAnswer === question.correctAnswer;
+              } else {
+                const correctAnswers = question.correctAnswers || [];
+                const userAnswers = Array.isArray(userAnswer) ? userAnswer : [];
+                correct =
+                  correctAnswers.length === userAnswers.length &&
+                  correctAnswers.every((ans: number) => userAnswers.includes(ans));
+              }
+
+              return {
+                questionIndex: qIndex,
+                correct,
+                userAnswer,
+                correctAnswer: question.correctAnswer,
+                correctAnswers: question.correctAnswers,
+              };
+            });
+            
+            setQuizResults({ score: prevScore, results });
+            setSubmitted(true);
+          } else {
+            setAnswers(new Array(module.quiz.length).fill(-1));
+          }
         }
       } catch (err) {
         console.error(err);
@@ -335,14 +371,26 @@ const QuizTake = () => {
               >
                 Back to Course
               </button>
-              {quizResults.score >= 70 && (
+              <div className="flex items-center gap-4">
                 <button
-                  onClick={() => navigate(`/courses/${courseId}`)}
-                  className="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setAnswers(new Array(quiz.length).fill(-1));
+                    setQuizResults(null);
+                  }}
+                  className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-medium transition-colors"
                 >
-                  Continue Learning
+                  Retake Quiz
                 </button>
-              )}
+                {quizResults.score >= 70 && (
+                  <button
+                    onClick={() => navigate(`/courses/${courseId}`)}
+                    className="bg-primary hover:bg-secondary text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                  >
+                    Continue Learning
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ) : (

@@ -7,6 +7,7 @@ export interface IEnrollment extends Document {
   progress: number;
   completedLessons: mongoose.Types.ObjectId[];
   quizScores: Map<string, number>; // quizId -> score
+  quizAnswers: Map<string, any[]>; // quizId -> answers array
   finalAssessmentPassed: boolean;
   score?: number;
   completedAt?: Date;
@@ -24,6 +25,7 @@ const EnrollmentSchema: Schema = new Schema(
     progress: { type: Number, default: 0 },
     completedLessons: [{ type: Schema.Types.ObjectId }],
     quizScores: { type: Map, of: Number, default: {} },
+    quizAnswers: { type: Map, of: Schema.Types.Mixed, default: {} },
     finalAssessmentPassed: { type: Boolean, default: false },
     score: { type: Number },
     completedAt: { type: Date },

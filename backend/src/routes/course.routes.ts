@@ -322,6 +322,11 @@ router.post(
       const score = Math.round(correct * 100);
       const quizId = `${moduleIndex}-${quizIndex}`; // simple id
       enrollment.quizScores.set(quizId, score);
+      
+      if (!enrollment.quizAnswers) {
+          enrollment.quizAnswers = new Map();
+      }
+      enrollment.quizAnswers.set(quizId, answers);
 
       if (quiz.isFinalAssessment) {
         enrollment.finalAssessmentPassed = score >= 70; // assume 70% passing
@@ -391,12 +396,26 @@ router.post(
         return;
       }
 
-      // Calculate final score (average of quiz scores or something)
+      // Calculate final score (average of quiz scores)
       const scores = Array.from(enrollment.quizScores.values());
-      const avgScore =
-        scores.length > 0
-          ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-          : 0;
+      
+      let totalQuizzes = 0;
+      course.modules.forEach((m) => {
+        if (m.quiz && m.quiz.length > 0) totalQuizzes++;
+      });
+
+      let avgScore = 0;
+      if (totalQuizzes > 0) {
+        if (scores.length < totalQuizzes) {
+          res.status(400).json({ message: "You must complete all quizzes to complete the course." });
+          return;
+        }
+        avgScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        if (avgScore < 70) {
+          res.status(400).json({ message: `Your total average quiz score is ${avgScore}%. You must retake and score an average of at least 70% to complete the course.` });
+          return;
+        }
+      }
 
       enrollment.status = "completed";
       enrollment.score = avgScore;
@@ -444,8 +463,15 @@ router.post(
           .status(400)
           .json({
             message:
-              "Certificate can only be generated for completed courses with at least 70% progress",
+              "Certificate can only be generated for completed courses with at least 70% progress and 70% quiz score",
           });
+        return;
+      }
+      
+      if (enrollment.score !== undefined && enrollment.score < 70) {
+        res.status(400).json({
+          message: "You need a total average quiz score of at least 70% to receive a certificate.",
+        });
         return;
       }
 
