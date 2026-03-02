@@ -11,7 +11,7 @@ const Certificates = () => {
   const [completedCourses, setCompletedCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedCourse, setSelectedCourse] = useState<never>(null);
+  const [selectedCourse, setSelectedCourse] = useState<any>(null);
   const [showCertModal, setShowCertModal] = useState(false);
   const [downloadingCert, setDownloadingCert] = useState(false);
 
